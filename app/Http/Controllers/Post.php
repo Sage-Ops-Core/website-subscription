@@ -46,12 +46,12 @@ class Post extends Controller
 
             $subscribers = Subscribers::where('website_id',$post->website_id)->get();
 
-            if($notification->notified === 0) {
+//            if($notification->notified === 0) {
                foreach ($subscribers as $key => $value) {
                    Mail::to($value->email)->send(new PostMail($details));
                }
-               $notification->update(['notified'=>1]);
-           }
+//               $notification->update(['notified'=>1]);
+//           }
             return response()->json($notification, 201);
         }
 
