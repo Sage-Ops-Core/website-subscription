@@ -37,7 +37,6 @@ class Post extends Controller
                 "post_id"=>$post->id,
                 "notified"=>0
             ];
-            $notification = Notifications::firstOrCreate($noti);
 
             $details = [
                 'title' => $post->title,
@@ -49,16 +48,16 @@ class Post extends Controller
 
 
 
-//            if($notification->notified === 0) {
+            if($post->wasRecentlyCreated) {
                foreach ($subscribers as $key => $value) {
                    $details['email'][] = $value->email;
-               }
-            ;
+               };
 
             dispatch(new SendEmailJob($details));
-//               $notification->update(['notified'=>1]);
-//           }
-            return response()->json($notification, 201);
+                return response()->json($post, 201);
+            }else{
+                return response()->json("Post Already Exists", 201);
+            }
         }
 
     }
