@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
 use App\Mail\PostMail;
 use App\Mail\TestMail;
 use App\Models\Notifications;
@@ -46,10 +47,15 @@ class Post extends Controller
 
             $subscribers = Subscribers::where('website_id',$post->website_id)->get();
 
+
+
 //            if($notification->notified === 0) {
                foreach ($subscribers as $key => $value) {
-                   Mail::to($value->email)->send(new PostMail($details));
+                   $details['email'][] = $value->email;
                }
+            ;
+
+            dispatch(new SendEmailJob($details));
 //               $notification->update(['notified'=>1]);
 //           }
             return response()->json($notification, 201);
